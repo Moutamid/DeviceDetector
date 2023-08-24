@@ -194,7 +194,13 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "enablePermissionsAndStart: ");
 
         Dexter.withContext(MainActivity.this)
-                .withPermissions(Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.CHANGE_WIFI_STATE)
+                .withPermissions(Manifest.permission.BLUETOOTH,
+                        Manifest.permission.BLUETOOTH_SCAN,
+                        Manifest.permission.BLUETOOTH_CONNECT,
+                        Manifest.permission.BLUETOOTH_ADMIN,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_WIFI_STATE,
+                        Manifest.permission.CHANGE_WIFI_STATE)
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
@@ -218,10 +224,10 @@ public class MainActivity extends AppCompatActivity {
                         } else if (report.isAnyPermissionPermanentlyDenied()) {
                             Log.d(TAG, "onPermissionsChecked: } else if (report.isAnyPermissionPermanentlyDenied()) {");
 
-                            /*List<PermissionDeniedResponse> jh = report.getDeniedPermissionResponses();
+                            List<PermissionDeniedResponse> jh = report.getDeniedPermissionResponses();
                             for (PermissionDeniedResponse permission : jh) {
                                 b.text.setText(b.text.getText().toString() + "\n" + permission.getPermissionName());
-                            }*/
+                            }
 
                             // open device settings when the permission is
                             // denied permanently
