@@ -123,6 +123,9 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onPermissionDenied(PermissionDeniedResponse response) {
                             Toast.makeText(MainActivity.this, "You need to provide permission!", Toast.LENGTH_SHORT).show();
+
+                            b.text.setText(b.text.getText().toString() + "\nBLUETOOTH_CONNECT");
+
                             Log.d(TAG, "onPermissionDenied: BLUETOOTH_CONNECT");
                             Intent intent = new Intent();
                             intent.setAction(
@@ -193,14 +196,27 @@ public class MainActivity extends AppCompatActivity {
     private void enablePermissionsAndStart() {
         Log.d(TAG, "enablePermissionsAndStart: ");
 
+        String[] permissions;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            permissions = new String[]{Manifest.permission.BLUETOOTH,
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_ADMIN,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_WIFI_STATE,
+                    Manifest.permission.CHANGE_WIFI_STATE};
+        } else {
+            permissions = new String[]{Manifest.permission.BLUETOOTH,
+                    Manifest.permission.BLUETOOTH_ADMIN,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_WIFI_STATE,
+                    Manifest.permission.CHANGE_WIFI_STATE};
+        }
+
         Dexter.withContext(MainActivity.this)
-                .withPermissions(Manifest.permission.BLUETOOTH,
-                        Manifest.permission.BLUETOOTH_SCAN,
-                        Manifest.permission.BLUETOOTH_CONNECT,
-                        Manifest.permission.BLUETOOTH_ADMIN,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_WIFI_STATE,
-                        Manifest.permission.CHANGE_WIFI_STATE)
+                .withPermissions(
+                        permissions
+                )
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
