@@ -67,7 +67,13 @@ public class MainActivity extends AppCompatActivity {
         b = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(b.getRoot());
         Log.d(TAG, "onCreate: ");
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        adapter = new RecyclerViewAdapterMessages();
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setReverseLayout(true);
+        b.bluetoothRv.setLayoutManager(linearLayoutManager);
+        b.bluetoothRv.setHasFixedSize(true);
+        b.bluetoothRv.setNestedScrollingEnabled(false);
+        b.bluetoothRv.setAdapter(adapter);
 
         BluetoothConfiguration config = new BluetoothConfiguration();
         config.context = getApplicationContext();
@@ -106,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
             public void onStopScan() {
                 Log.d(TAG, "onStopScan: ");
                 new Handler().postDelayed(() -> {
-                    bluetoothManager.startScan();
+                    clearAndRefreshRecyclerView(); // Clear the existing list of devices
+                    bluetoothManager.startScan(); // Start a new Bluetooth scan
                 }, 5000);
             }
         });
@@ -164,6 +171,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void openBluetooth() {
         Log.d(TAG, "openBluetooth: ");
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter(); // Initialize BluetoothAdapter
+        if (mBluetoothAdapter == null) {
+            // Device doesn't support Bluetooth, handle accordingly
+            return;
+        }
         if (!mBluetoothAdapter.isEnabled()) {
             Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             // The REQUEST_ENABLE_BT constant passed to startActivityForResult() is a locally defined integer (which must be greater than 0), that the system passes back to you in your onActivityResult()
@@ -179,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
             enablePermissionsAndStart();
         }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -237,6 +250,8 @@ public class MainActivity extends AppCompatActivity {
 
                             }, 5000);
 
+                            // Todo: tag
+
                         } else if (report.isAnyPermissionPermanentlyDenied()) {
                             Log.d(TAG, "onPermissionsChecked: } else if (report.isAnyPermissionPermanentlyDenied()) {");
 
@@ -283,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
             if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
+            clearAndRefreshRecyclerView(); // Clear the existing list of devices
             for (ScanResult device : wifiManager.getScanResults()) {
                 DeviceModelB modelB = new DeviceModelB();
                 modelB.name = "Wifi: " + device.SSID;
@@ -291,15 +307,18 @@ public class MainActivity extends AppCompatActivity {
                 tasksArrayList.add(modelB);
             }
 
-            initRecyclerView();
+            adapter.notifyDataSetChanged(); // Notify the adapter of the new data
 
             new Handler().postDelayed(() -> {
-
                 wifiManager.startScan();
             }, 5000);
         }
     };
 
+    private void clearAndRefreshRecyclerView() {
+        tasksArrayList.clear(); // Clear the list of devices
+        adapter.notifyDataSetChanged(); // Notify the adapter that the data has changed
+    }
     private ArrayList<DeviceModelB> tasksArrayList = new ArrayList<>();
 
     private RecyclerView conversationRecyclerView;
