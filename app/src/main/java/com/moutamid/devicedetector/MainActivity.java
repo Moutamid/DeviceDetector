@@ -237,6 +237,8 @@ public class MainActivity extends AppCompatActivity {
 
                             }, 5000);
 
+                            // Todo: tag
+
                         } else if (report.isAnyPermissionPermanentlyDenied()) {
                             Log.d(TAG, "onPermissionsChecked: } else if (report.isAnyPermissionPermanentlyDenied()) {");
 
