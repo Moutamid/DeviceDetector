@@ -63,13 +63,17 @@ public class PermissionsActivity extends AppCompatActivity {
         b.bluetoothConnectSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             second = isChecked;
             if (isChecked) {
-                askPermission(b.bluetoothConnectSwitch, Manifest.permission.BLUETOOTH_CONNECT);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    askPermission(b.bluetoothConnectSwitch, Manifest.permission.BLUETOOTH_CONNECT);
+                }
             }
         });
         b.bluetoothScanSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             third = isChecked;
             if (isChecked) {
-                askPermission(b.bluetoothScanSwitch, Manifest.permission.BLUETOOTH_SCAN);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    askPermission(b.bluetoothScanSwitch, Manifest.permission.BLUETOOTH_SCAN);
+                }
             }
         });
         b.bluetoothAdminSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {

@@ -17,18 +17,29 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
                 android:gravity="start"
                 android:text="Give Permissions"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:gravity="start"
+                android:text="Please allow all permissions to continue"
+                android:textSize="15sp" />
+
+
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/bluetoothSwitch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
                 android:text="Bluetooth Permission" />
 
             <androidx.appcompat.widget.SwitchCompat
