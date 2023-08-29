@@ -95,7 +95,8 @@ public class BluetoothClass {
     }
 
     public void startScanning() {
-        bluetoothManager.startScan(); // Start a new Bluetooth scan
+        if (bluetoothManager != null)
+            bluetoothManager.startScan(); // Start a new Bluetooth scan
     }
 
 }

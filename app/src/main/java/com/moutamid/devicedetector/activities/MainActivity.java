@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-    private boolean isAppStopped = false;
+//    private boolean isAppStopped = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         b = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(b.getRoot());
         Log.d(TAG, "onCreate: ");
-
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -75,17 +74,17 @@ public class MainActivity extends AppCompatActivity {
         if (adapter.getItemCount() > 0 && progressDialog.isShowing())
             progressDialog.dismiss();
 
-        if (!isAppStopped)
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    requestNewList();
-                }
-            }, 5000);
+//        if (!isAppStopped)
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                requestNewList();
+            }
+        }, 5000);
 
     }
 
-    @Override
+    /*@Override
     protected void onDestroy() {
         super.onDestroy();
         isAppStopped = true;
@@ -110,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         isAppStopped = false;
         requestNewList();
     }
-
+*/
     private void startInitService() {
         mYourService = new YourService();
         mServiceIntent = new Intent(this, mYourService.getClass());
