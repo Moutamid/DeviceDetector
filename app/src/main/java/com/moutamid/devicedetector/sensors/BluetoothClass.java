@@ -76,7 +76,6 @@ public class BluetoothClass {
                         value,
                         MainActivity.class
                 );
-
             }
 
             @Override

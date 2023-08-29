@@ -65,6 +65,9 @@ public class PermissionsActivity extends AppCompatActivity {
             if (isChecked) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     askPermission(b.bluetoothConnectSwitch, Manifest.permission.BLUETOOTH_CONNECT);
+                }else {
+                    checkButtonsState();
+
                 }
             }
         });
@@ -73,6 +76,8 @@ public class PermissionsActivity extends AppCompatActivity {
             if (isChecked) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     askPermission(b.bluetoothScanSwitch, Manifest.permission.BLUETOOTH_SCAN);
+                }else {
+                    checkButtonsState();
                 }
             }
         });
@@ -90,6 +95,7 @@ public class PermissionsActivity extends AppCompatActivity {
         });
         b.wifiSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             sixth = isChecked;
+            checkButtonsState();
             if (isChecked) {
                 askPermission(b.wifiSwitch, Manifest.permission.ACCESS_WIFI_STATE);
                 new Handler().postDelayed(() -> {
@@ -112,6 +118,7 @@ public class PermissionsActivity extends AppCompatActivity {
                         startActivityForResult(intent, 2);
                     } else {
                         // DOZE MODE ALREADY ACTIVE
+                        checkButtonsState();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -141,6 +148,8 @@ public class PermissionsActivity extends AppCompatActivity {
             if (isChecked) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     askPermission(b.notificationsSwitch, Manifest.permission.POST_NOTIFICATIONS);
+                }else {
+                    checkButtonsState();
                 }
             }
         });
@@ -189,6 +198,7 @@ public class PermissionsActivity extends AppCompatActivity {
                 b.dozeSwitch.setChecked(false);
             }
         }
+        checkButtonsState();
 
     }
 

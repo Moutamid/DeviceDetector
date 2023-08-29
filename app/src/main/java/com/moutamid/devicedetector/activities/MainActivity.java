@@ -1,60 +1,33 @@
 package com.moutamid.devicedetector.activities;
 
-import android.Manifest;
 import android.app.ActivityManager;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PowerManager;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fxn.stash.Stash;
-import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothClassicService;
-import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothConfiguration;
-import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothService;
-import com.karumi.dexter.BuildConfig;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.karumi.dexter.listener.single.PermissionListener;
 import com.moutamid.devicedetector.R;
-import com.moutamid.devicedetector.service.YourService;
 import com.moutamid.devicedetector.databinding.ActivityMainBinding;
 import com.moutamid.devicedetector.models.DeviceModelB;
+import com.moutamid.devicedetector.service.YourService;
 import com.moutamid.devicedetector.utils.Constants;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -64,13 +37,23 @@ public class MainActivity extends AppCompatActivity {
     Intent mServiceIntent;
     private YourService mYourService;
 
+    private ProgressDialog progressDialog;
+
+    private boolean isAppStopped = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         b = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(b.getRoot());
         Log.d(TAG, "onCreate: ");
+
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Loading devices...");
+        progressDialog.show();
 
         initRecyclerView();
 
@@ -89,20 +72,52 @@ public class MainActivity extends AppCompatActivity {
 
         adapter.notifyDataSetChanged();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                requestNewList();
-            }
-        }, 5000);
+        if (adapter.getItemCount() > 0 && progressDialog.isShowing())
+            progressDialog.dismiss();
 
+        if (!isAppStopped)
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    requestNewList();
+                }
+            }, 5000);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isAppStopped = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isAppStopped = true;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        isAppStopped = false;
+        requestNewList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isAppStopped = false;
+        requestNewList();
     }
 
     private void startInitService() {
         mYourService = new YourService();
         mServiceIntent = new Intent(this, mYourService.getClass());
         if (!isMyServiceRunning(mYourService.getClass())) {
-            startService(mServiceIntent);
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
+                startForegroundService(mServiceIntent);
+            else startService(mServiceIntent);
         }
     }
 
